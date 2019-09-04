@@ -1,0 +1,5 @@
+tint2 &
+gxkb &
+xfce4-power-manager &
+nitrogen --restore &
+emacs --daemon &

@@ -1,0 +1,67 @@
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
+(setq inhibit-startup-screen t )
+(setq ring-bell-function 'ignore ) ; silent bell on mistakes
+(setq-default fill-column 80) ; toggle wrapping text at this column
+;(global-linum-mode 1)        ; line numbering
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p); Changes all yes/no questions to y/n type;
+(global-visual-line-mode t)
+(setq default-input-method "greek") ; Change layout with C-\
+(setq calendar-week-start-day 1)
+(setq org-startup-folded (quote showall))
+
+;; Keybindings
+(global-set-key [f5] 'bookmark-bmenu-list)
+(global-set-key [(control q)] 'kill-this-buffer)
+
+;; ORG Standard key bindings;
+(global-set-key "\C-cl" 'org-store-link);
+(global-set-key "\C-ca" 'org-agenda);
+(global-set-key "\C-cb" 'org-iswitchb);
+(define-key global-map "\C-cc" 'org-capture)
+
+;; Package setup
+ (setq package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/"))))
+
+(require 'all-the-icons)
+
+
+;; Setup gnus for GMX.com
+(setq gnus-select-method '(nnimap "gmx"
+(nnimap-address "imap.gmx.com")
+(nnimap-server-port 993)
+(nnimap-stream ssl)))
+(setq message-send-mail-function 'smtpmail-send-it
+smtpmail-starttls-credentials '(("mail.gmx.com" 587 nil nil))
+smtpmail-auth-credentials '(("mail.gmx.com" 587 "sivridis@gmx.com" nil))
+smtpmail-default-smtp-server "mail.gmx.com"
+smtpmail-smtp-server "mail.gmx.com"
+smtpmail-smtp-service 587
+smtpmail-local-domain "yourdomain")
+(global-set-key [f9] 'gnus)
+
+
+	       
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (all-the-icons))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
