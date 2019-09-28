@@ -4,12 +4,16 @@
 #now=$(date +"%d_%m_%Y")
 #zip -r /media/nick/TOSHIBA\ EXT/backupData/kafka-2019/nickWorkFiles_$now.zip ~/Nextcloud/  ~/BSD19/ ~/.emacs.d/ ~/backup.sh ~/musica.sh  -e -dd
 
-# rsync ulysses
-rsync -avh --delete /home/nick/ulysses /media/nick/TOSHIBA\ EXT/backupData/ulysses-19/
 
+# backup blog
 now=$(date +"%d_%m_%Y")
-zip -r ~/ownCloud/backup/nickWorkFiles_$now.zip ~/ulysses -e -dd
+zip -r ~/ownCloud/backup/sivridio_$now.zip ~/sivridio -e -dd
 
-rsync -avh --delete /home/nick/URF /media/nick/TOSHIBA\ EXT/backupData/ulysses-19/
+
+# rsync ulysses
+rsync -avh --delete /home/nick/ownCloud /media/nick/TOSHIBA\ EXT/backupData/albertine/NextCloud/
+
+
+rsync -avh --delete /home/nick/URF /media/nick/TOSHIBA\ EXT/backupData/albertine/URF/
 
 

@@ -11,7 +11,10 @@ echo "[3] Radio-Kosmos"
 echo "[4] Radio-1055 rock"
 echo "[5] SomaFM 80s underground"
 echo "[6] Virgin Rock 80s"
+echo "[7] SomaFM Sonic Universe"
+
 echo "--------------------"
+
 echo "[9] Shuffle Musica"
 echo "[0] Exit"
 echo
@@ -46,6 +49,10 @@ mpg123 http://ice2.somafm.com/u80s-128-mp3
 
 "6")
 mpg123 http://icy.unitedradio.it/VirginRock80.mp3
+;;
+
+"7")
+mpg123 http://ice4.somafm.com/sonicuniverse-256-mp3
 ;;
 
 	"0")
