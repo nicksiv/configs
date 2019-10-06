@@ -3,7 +3,7 @@
 # eg: source ~/ulysses/dots/bash_aliases
 
 
-alias radio='~/ownCloud/configs/musica.sh'
+alias radio='~/configs/musica.sh'
 
 alias upd='sudo apt update && sudo apt upgrade'
 alias em='emacs -nw'
