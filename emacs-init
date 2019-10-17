@@ -18,7 +18,7 @@
 (setq default-input-method "greek") ; Change layout with C-\
 (setq calendar-week-start-day 1)
 (setq org-startup-folded (quote showall))
-(setq default-directory "~/albertine/org")
+(setq default-directory "~/swan/org")
 
 ;; Keybindings
 (global-set-key [f5] 'bookmark-bmenu-list)
@@ -26,7 +26,7 @@
 
 ;; Writeroom with spell check and text scale
 (global-set-key [f8] (lambda () (interactive) 
-(find-file "~/albertine/org/sivridio-posts.org")(writeroom-mode)(flyspell-mode)(text-scale-set 1)(end-of-buffer)
+(find-file "~/swan/org/sivridio-posts.org")(writeroom-mode)(flyspell-mode)(text-scale-set 1)(end-of-buffer)
 ))
 
 
@@ -37,13 +37,65 @@
 (define-key global-map "\C-cc" 'org-capture)
 
 ;; Package setup
- (setq package-archives
+
+;; use-package setup
+(require 'package)
+(setq package-enable-at-startup nil) ; dont do it immediately
+
+(setq package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa" . "https://melpa.org/packages/"))))
+(package-initialize)
 
-(require 'writeroom-mode)
+;; Bootstrap use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents) ; update archives
+  (package-install 'use-package)) ; grab the newest use-package
+
+;; Define packages
+(require 'use-package)
+
+
+;; Always download if not available
+(setq use-package-always-ensure t)
+
+
+(use-package writeroom-mode)
+
+
 (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 5))))
+
+;; ivy
+(use-package ivy
+  :diminish (ivy-mode . "")
+  :init (ivy-mode 1) ; globally at startup
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-height 20)
+  (setq ivy-count-format "%d/%d "))
+(provide 'init-ivy)
+;;; init-ivy.el ends here.
+
+;; Override the basic Emacs commands
+(use-package counsel
+  :bind* ; load when pressed
+  (("M-x"     . counsel-M-x)
+   ("C-s"     . swiper)
+   ("C-x C-f" . counsel-find-file)
+   ("C-x C-r" . counsel-recentf)  ; search for recently edited
+   ("C-c g"   . counsel-git)      ; search for files in git repo
+   ("C-c j"   . counsel-git-grep) ; search for regexp in git repo
+   ("C-c /"   . counsel-ag)       ; Use ag for regexp
+   ("C-x l"   . counsel-locate)
+   ("C-x C-f" . counsel-find-file)
+   ("<f1> f"  . counsel-describe-function)
+   ("<f1> v"  . counsel-describe-variable)
+   ("<f1> l"  . counsel-find-library)
+   ("<f2> i"  . counsel-info-lookup-symbol)
+   ("<f2> u"  . counsel-unicode-char)
+   ("C-c C-r" . ivy-resume)))     ; Resume last Ivy-based completion
+
 
 
 ;; Setup gnus for GMX.com
@@ -69,28 +121,47 @@ smtpmail-local-domain "yourdomain")
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (tango-dark)))
+ '(org-agenda-files (quote ("~/swan/org/nicksiv.org")))
  '(org-blank-before-new-entry (quote ((heading) (plain-list-item . auto))))
+ '(org-capture-templates
+   (quote
+    (("t" "Add Personal Task" entry
+      (file+headline "~/swan/org/nicksiv.org" "Inbox")
+      "* TODO %? 
+:PROPERTIES:
+:CREATED:  %U
+:END:  " :prepend t)
+
+     ("a" "Add Home Task" entry
+      (file+headline "~/swan/org/home.org" "Inbox")
+      "* TODO %? 
+:PROPERTIES:
+:CREATED:  %U
+:END:  " :prepend t)
+
+     )))
  '(org-hide-leading-stars t)
  '(org-insert-heading-respect-content t)
  '(org-log-into-drawer t)
+ '(org-log-state-notes-insert-after-drawers t)
  '(org-return-follows-link t)
  '(org-reverse-note-order t)
  '(org-todo-keyword-faces
    (quote
-    (("TODO" :foreground "pink" :weight bold)
+    (("TODO" :foreground "pink" :background "dark red" :weight bold)
      ("APPT" :foreground "dark pink" :weight bold)
-     ("STARTED" :foreground "dark orange" :weight bold)
-     ("WAITING" :foreground "red" :weight bold)
-     ("NOTE" :foreground "blue" :weight bold)
-     ("DELEGATED" :foreground "dark violet" :weight bold)
-     ("DEFERRED" :foreground "dark blue" :weight bold)
-     ("SOMEDAY" :foreground "dark blue" :weight bold)
-     ("PROJECT" :foreground "#088e8e" :weight bold))))
+     ("STRT" :foreground "dark orange" :weight bold)
+     ("WAIT" :foreground "red" :weight bold)
+     ("NOTE" :foreground "white" :background "dark gray" :weight bold)
+     ("DLGD" :foreground "dark violet" :weight bold)
+     ("DFRD" :foreground "dark blue" :weight bold)
+     ("SMDY" :foreground "dark gray" :background "dark blue" :weight bold)
+     ("PROJ" :foreground "#088e8e" :background "dark blue" :weight bold))))
  '(org-todo-repeat-to-state "TODO")
- '(package-selected-packages (quote (writeroom-mode))))
+ '(package-selected-packages (quote (counsel use-package ivy writeroom-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(org-level-1 ((t (:inherit outline-1 :weight bold)))))

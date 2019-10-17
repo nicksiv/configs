@@ -27,4 +27,4 @@ export PATH="$HOME/gems/bin:$PATH"
 
 export LEDGER_FILE="$HOME/ulysses/sheets/ledger-19.dat"
 
-fortune | cowsay
+# fortune | cowsay
