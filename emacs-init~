@@ -29,12 +29,35 @@
 (find-file "~/swan/org/sivridio-posts.org")(writeroom-mode)(flyspell-mode)(text-scale-set 1)(end-of-buffer)
 ))
 
+;; Open organizer files
+(global-set-key "\C-cm" (lambda () (interactive) 
+		       (find-file "~/swan/org/home.org")(beginning-of-buffer)
+		       (split-window-right)
+		       (find-file "~/swan/org/nicksiv.org")(beginning-of-buffer)
+
+))
+(global-set-key "\C-cn" (lambda () (interactive) 
+		       (find-file "~/swan/org/nicksiv.org")(beginning-of-buffer)
+(delete-other-windows)
+))
+
 
 ;; ORG Standard key bindings;
 (global-set-key "\C-cl" 'org-store-link);
 (global-set-key "\C-ca" 'org-agenda);
 (global-set-key "\C-cb" 'org-iswitchb);
 (define-key global-map "\C-cc" 'org-capture)
+
+
+;; Agenda custom
+(setq org-agenda-custom-commands
+      '(("w" "Worklist priority A#"
+         (
+	  (todo "TODO")
+	  (tags-todo "+PRIORITY=\"A\"")
+         ((org-agenda-compact-blocks t))) 
+
+        )))
 
 ;; Package setup
 
@@ -63,8 +86,15 @@
 
 (use-package writeroom-mode)
 
-
-(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 5))))
+;; easy-hugo
+(use-package easy-hugo
+:init
+(setq easy-hugo-basedir "~/sivridio/")
+(setq easy-hugo-url "https://sivridis.com")
+(setq easy-hugo-sshdomain "blogdomain")
+(setq easy-hugo-root "/home/blog/")
+(setq easy-hugo-previewtime "300")
+:bind ("C-c C-e" . easy-hugo))
 
 ;; ivy
 (use-package ivy
@@ -121,12 +151,18 @@ smtpmail-local-domain "yourdomain")
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (tango-dark)))
- '(org-agenda-files (quote ("~/swan/org/nicksiv.org")))
+ '(org-agenda-files (quote ("~/swan/org/home.org" "~/swan/org/nicksiv.org")))
  '(org-blank-before-new-entry (quote ((heading) (plain-list-item . auto))))
  '(org-capture-templates
    (quote
     (("t" "Add Personal Task" entry
-      (file+headline "" "Inbox")
+      (file+headline "~/swan/org/nicksiv.org" "Inbox")
+      "* TODO %? 
+:PROPERTIES:
+:CREATED:  %U
+:END:  " :prepend t)
+     ("a" "Add Home Task" entry
+      (file+headline "~/swan/org/home.org" "Inbox")
       "* TODO %? 
 :PROPERTIES:
 :CREATED:  %U
@@ -135,6 +171,7 @@ smtpmail-local-domain "yourdomain")
  '(org-insert-heading-respect-content t)
  '(org-log-into-drawer t)
  '(org-log-state-notes-insert-after-drawers t)
+ '(org-refile-targets (quote ((org-agenda-files :maxlevel . 5))))
  '(org-return-follows-link t)
  '(org-reverse-note-order t)
  '(org-todo-keyword-faces
@@ -149,7 +186,7 @@ smtpmail-local-domain "yourdomain")
      ("SMDY" :foreground "dark gray" :background "dark blue" :weight bold)
      ("PROJ" :foreground "#088e8e" :background "dark blue" :weight bold))))
  '(org-todo-repeat-to-state "TODO")
- '(package-selected-packages (quote (counsel use-package ivy writeroom-mode))))
+ '(package-selected-packages (quote (easy-hugo counsel use-package ivy writeroom-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
