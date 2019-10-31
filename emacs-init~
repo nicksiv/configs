@@ -18,7 +18,7 @@
 (setq default-input-method "greek") ; Change layout with C-\
 (setq calendar-week-start-day 1)
 (setq org-startup-folded (quote showall))
-(setq default-directory "~/swan/org")
+(setq default-directory "~/Dropbox/ZK")
 
 ;; Keybindings
 (global-set-key [f5] 'bookmark-bmenu-list)
@@ -26,16 +26,10 @@
 
 ;; Writeroom with spell check and text scale
 (global-set-key [f8] (lambda () (interactive) 
-(find-file "~/swan/org/sivridio-posts.org")(writeroom-mode)(flyspell-mode)(text-scale-set 1)(end-of-buffer)
+(writeroom-mode)(flyspell-mode)(text-scale-set 1)(end-of-buffer)
 ))
 
 ;; Open organizer files
-(global-set-key "\C-cm" (lambda () (interactive) 
-		       (find-file "~/swan/org/home.org")(beginning-of-buffer)
-		       (split-window-right)
-		       (find-file "~/swan/org/nicksiv.org")(beginning-of-buffer)
-
-))
 (global-set-key "\C-cn" (lambda () (interactive) 
 		       (find-file "~/swan/org/nicksiv.org")(beginning-of-buffer)
 (delete-other-windows)
@@ -90,11 +84,11 @@
 (use-package easy-hugo
 :init
 (setq easy-hugo-basedir "~/sivridio/")
+(setq easy-hugo-postdir "content/posts")
 (setq easy-hugo-url "https://sivridis.com")
-(setq easy-hugo-sshdomain "blogdomain")
 (setq easy-hugo-root "/home/blog/")
 (setq easy-hugo-previewtime "300")
-:bind ("C-c C-e" . easy-hugo))
+:bind ("C-c h" . easy-hugo))
 
 ;; ivy
 (use-package ivy
@@ -127,42 +121,61 @@
    ("C-c C-r" . ivy-resume)))     ; Resume last Ivy-based completion
 
 
-
-;; Setup gnus for GMX.com
-(setq gnus-select-method '(nnimap "gmx"
-(nnimap-address "imap.gmx.com")
-(nnimap-server-port 993)
-(nnimap-stream ssl)))
-(setq message-send-mail-function 'smtpmail-send-it
-smtpmail-starttls-credentials '(("mail.gmx.com" 587 nil nil))
-smtpmail-auth-credentials '(("mail.gmx.com" 587 "sivridis@gmx.com" nil))
-smtpmail-default-smtp-server "mail.gmx.com"
-smtpmail-smtp-server "mail.gmx.com"
-smtpmail-smtp-service 587
-smtpmail-local-domain "yourdomain")
-(global-set-key [f9] 'gnus)
+;; Deft
+(use-package deft
+  :bind ("<f9>" . deft)
+  :commands (deft)
+  :config (setq deft-directory "~/Dropbox/ZK/"
+                deft-extensions '("md" "org" "txt")
+		deft-use-filename-as-title t
+		deft-markdown-mode-title-level 1
+		deft-default-extension "org"
+		)
+  )
 
 
-
+(use-package yasnippet)
 	       
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (tango-dark)))
- '(org-agenda-files (quote ("~/swan/org/home.org" "~/swan/org/nicksiv.org")))
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#242728" "#ff0066" "#63de5d" "#E6DB74" "#06d8ff" "#ff8eff" "#53f2dc" "#f8fbfc"])
+ '(beacon-color "#d54e53")
+ '(compilation-message-face (quote default))
+ '(custom-enabled-themes (quote (moe-dark)))
+ '(custom-safe-themes
+   (quote
+    ("26d49386a2036df7ccbe802a06a759031e4455f07bda559dcf221f53e8850e69" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "d8dc153c58354d612b2576fea87fe676a3a5d43bcc71170c62ddde4a1ad9e1fb" "58c6711a3b568437bab07a30385d34aacf64156cc5137ea20e799984f4227265" "b3775ba758e7d31f3bb849e7c9e48ff60929a792961a2d536edec8f68c671ca5" "332fcf3c7208aca9fab65d54203f78a242482e7fd65f5725a2482c20b1730732" "a2cde79e4cc8dc9a03e7d9a42fabf8928720d420034b66aecc5b665bbf05d4e9" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "37ba833442e0c5155a46df21446cadbe623440ccb6bbd61382eb869a2b9e9bf9" default)))
+ '(deft-use-filename-as-title nil)
+ '(deft-use-filter-string-for-filename t)
+ '(fci-rule-color "#323342")
+ '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
+ '(frame-background-mode (quote dark))
+ '(highlight-changes-colors (quote ("#ff8eff" "#ab7eff")))
+ '(highlight-tail-colors
+   (quote
+    (("#323342" . 0)
+     ("#63de5d" . 20)
+     ("#4BBEAE" . 30)
+     ("#1DB4D0" . 50)
+     ("#9A8F21" . 60)
+     ("#A75B00" . 70)
+     ("#F309DF" . 85)
+     ("#323342" . 100))))
+ '(linum-format " %7i ")
+ '(magit-diff-use-overlays nil)
+ '(menu-bar-mode nil)
+ '(org-agenda-files (quote ("~/ZK/")))
  '(org-blank-before-new-entry (quote ((heading) (plain-list-item . auto))))
  '(org-capture-templates
    (quote
-    (("t" "Add Personal Task" entry
+    (("t" "Add Task" entry
       (file+headline "~/swan/org/nicksiv.org" "Inbox")
-      "* TODO %? 
-:PROPERTIES:
-:CREATED:  %U
-:END:  " :prepend t)
-     ("a" "Add Home Task" entry
-      (file+headline "~/swan/org/home.org" "Inbox")
       "* TODO %? 
 :PROPERTIES:
 :CREATED:  %U
@@ -186,10 +199,12 @@ smtpmail-local-domain "yourdomain")
      ("SMDY" :foreground "dark gray" :background "dark blue" :weight bold)
      ("PROJ" :foreground "#088e8e" :background "dark blue" :weight bold))))
  '(org-todo-repeat-to-state "TODO")
- '(package-selected-packages (quote (easy-hugo counsel use-package ivy writeroom-mode))))
+ '(package-selected-packages
+   (quote
+    (moe-theme color-theme-sanityinc-tomorrow abyss-theme easy-hugo counsel use-package ivy writeroom-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-level-1 ((t (:inherit outline-1 :weight bold)))))
+ '(org-level-2 ((t (:foreground "#a1db00" :weight light)))))
