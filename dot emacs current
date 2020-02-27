@@ -1,0 +1,199 @@
+;; emacs config for albert: 2020-01-18
+
+(setq inhibit-startup-screen t )
+(setq ring-bell-function 'ignore ) ; silent bell on mistakes
+(setq-default fill-column 80) ; toggle wrapping text at this column
+(global-linum-mode 1)        ; line numbering
+(menu-bar-mode -1)
+(setq make-backup-files nil) 
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p); Changes all yes/no questions to y/n type;
+(global-visual-line-mode t)
+(setq default-input-method "greek") ; Change layout with C-\
+(setq calendar-week-start-day 1)
+(setq default-directory "~/albert/")
+(setq-default left-margin-width 5  right-margin-width 20)
+
+;; Keybindings
+(global-set-key [f5] 'bookmark-bmenu-list)
+(global-set-key [(control q)] 'kill-this-buffer)
+(global-set-key (kbd "C-c d") 'insert-date)
+
+;; ORG Standard key bindings;
+(global-set-key "\C-cl" 'org-store-link);
+(global-set-key "\C-ca" 'org-agenda);
+(global-set-key "\C-cb" 'org-iswitchb);
+(define-key global-map "\C-cc" 'org-capture)
+
+;; CUSTOM FILE BINDINGS
+(global-set-key (kbd "C-c C-l") (lambda() (interactive)(find-file "~/albert/data/fc2020.journal")))
+(global-set-key (kbd "C-c C-m") (lambda() (interactive)(find-file "~/albert/gtd/feb2020.org")))
+
+
+;; ORG settings
+(setq org-blank-before-new-entry (quote ((heading) (plain-list-item . auto))))
+(setq org-hide-leading-stars t)
+(setq org-insert-heading-respect-content t)
+(setq org-log-into-drawer t)
+(setq org-log-state-notes-insert-after-drawers t)
+(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 1))))
+(setq org-return-follows-link t)
+(setq org-reverse-note-order t)
+(setq org-todo-repeat-to-state "TODO")
+(setq org-set-startup-visibility "all")
+
+(setq org-todo-keywords
+  '((sequence "TODO(t)" "PROJECT(p)" "DEFERRED(r)" "SOMEDAY(s)" "WAIT(w)" "|" "DONE(d!)" "CANCELED(c@)")))
+
+(setq org-todo-keyword-faces
+   (quote
+    (
+    ;; ("TODO" :foreground "pink" :background "dark red" :weight bold)
+     ("APPT" :foreground "dark pink" :weight bold)
+     ("STRT" :foreground "dark orange" :weight bold)
+     ("WAIT" :foreground "dark violet" :weight bold)
+     ("NOTE" :foreground "white" :background "dark gray" :weight bold)
+     ("DLGD" :foreground "dark violet" :weight bold)
+     ("DEFERRED" :foreground "royal blue" :weight bold)
+     ("SOMEDAY" :foreground "dark gray" :weight bold)
+     ("PROJECT" :foreground "white" :background "blue" :weight bold))))
+
+
+;; Package setup
+
+;; use-package setup
+(require 'package)
+(setq package-enable-at-startup nil) ; dont do it immediately
+
+(setq package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa" . "https://melpa.org/packages/"))))
+(package-initialize)
+
+;; Bootstrap use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents) ; update archives
+  (package-install 'use-package)) ; grab the newest use-package
+
+;; Define packages
+(require 'use-package)
+
+
+;; Always download if not available
+(setq use-package-always-ensure t)
+
+;; WRITEROOM MODE
+(use-package writeroom-mode)
+(setq writeroom-width 60)
+
+(global-set-key [f8] (lambda () (interactive) 
+(writeroom-mode)(flyspell-mode)(text-scale-set 1)(end-of-buffer)
+))
+
+;; CAPTURE
+(setq org-capture-templates
+   (quote
+    (("t" "Todo entry" entry
+      (file+headline "~/albert/gtd/gtd.org" "Inbox")
+      "** TODO %?
+:PROPERTIES:
+:CREATED:  %U
+:END:
+")
+     )))
+
+;; EASY-HUGO
+(use-package easy-hugo
+:init
+(setq easy-hugo-basedir "~/sivridio/")
+(setq easy-hugo-postdir "content/posts")
+(setq easy-hugo-url "https://sivridis.com")
+(setq easy-hugo-root "/home/blog/")
+(setq easy-hugo-previewtime "300")
+:bind ("C-c h" . easy-hugo))
+
+
+;; LEDGER
+(use-package ledger-mode)
+   (autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
+   (add-to-list 'auto-mode-alist '("\\.journal$" . ledger-mode))
+
+(add-hook 'ledger-mode-hook
+          (lambda ()
+            (setq-local tab-always-indent 'complete)
+            (setq-local completion-cycle-threshold t)
+            (setq-local ledger-complete-in-steps t)))
+
+;; YASNIPPET
+(use-package yasnippet)
+(yas-global-mode 1)
+
+;; IVY
+(use-package ivy
+  :diminish (ivy-mode . "")
+  :init (ivy-mode 1) ; globally at startup
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-height 20)
+  (setq ivy-count-format "%d/%d "))
+(provide 'init-ivy)
+
+;; Override the basic Emacs commands
+(use-package counsel
+  :bind* ; load when pressed
+  (("M-x"     . counsel-M-x)
+   ("C-s"     . swiper)
+   ("C-x C-f" . counsel-find-file)
+   ("C-x C-r" . counsel-recentf)  ; search for recently edited
+   ("C-c g"   . counsel-git)      ; search for files in git repo
+   ("C-c j"   . counsel-git-grep) ; search for regexp in git repo
+   ("C-c /"   . counsel-ag)       ; Use ag for regexp
+   ("C-x l"   . counsel-locate)
+   ("C-x C-f" . counsel-find-file)
+   ("<f1> f"  . counsel-describe-function)
+   ("<f1> v"  . counsel-describe-variable)
+   ("<f1> l"  . counsel-find-library)
+   ("<f2> i"  . counsel-info-lookup-symbol)
+   ("<f2> u"  . counsel-unicode-char)
+   ("C-c C-r" . ivy-resume)))     ; Resume last Ivy-based completion
+
+(setq org-agenda-format-date (lambda (date) (concat "\n"
+;                                                    (make-string 20 ?_)
+ ;                                                   "\n"
+                                                   (org-agenda-format-date-aligned date))))
+
+
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (tango-dark)))
+ '(font-use-system-font t)
+ '(initial-buffer-choice "~/albert/gtd/")
+ '(ledger-reports
+   (quote
+    (("inc" "ledger [[ledger-mode-flags]] -f /home/nick/albert/data/fc2020.journal --collapse bal incom Expenses")
+     ("pos" "ledger [[ledger-mode-flags]] -f /home/nick/albert/data/fc2020.journal bal ass liab")
+     ("bal" "%(binary) -f %(ledger-file) bal")
+     ("reg" "%(binary) -f %(ledger-file) reg")
+     ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+     ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+ '(menu-bar-mode nil)
+ '(org-agenda-files (quote ("~/albert/gtd/")))
+ '(org-log-done (quote time))
+ '(org-startup-folded (quote content))
+ '(package-selected-packages
+   (quote
+    (yasnippet counsel ivy ledger-mode ledger easy-hugo writeroom-mode use-package)))
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Noto Sans Mono" :foundry "GOOG" :slant normal :weight normal :height 120 :width normal)))))
